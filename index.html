@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap" rel="stylesheet">
+    <title>Purchase Order Management</title>
+    <style>
+        body {
+  font-family: 'Cairo', sans-serif;
+  background-color: #F6FEFC; /* New background color for the body */
+  direction: ltr; /* Changed to LTR */
+  color: #003a2d; /* Dark Teal color from Wuilt logo */
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.form-group-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.input-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-field label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.input-field input[type="text"],
+.input-field input[type="email"],
+.input-field input[type="date"],
+.input-field input[type="number"],
+.input-field textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input-field input[type="text"]:focus,
+.input-field input[type="email"]:focus,
+.input-field input[type="date"]:focus,
+.input-field input[type="number"]:focus,
+.input-field textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    height: 60px;
+}
+
+.full-width {
+    flex-basis: 100%;
+}
+
+/* Table styling */
+#itemTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#itemTable td, #itemTable th {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+#itemTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+#itemTable td input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Summary styling */
+.form-group-row span {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.main-calculator-container .bt-ro {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* Button styles */
+.main-calculator-container .btn-tools-primary,
+.main-calculator-container .btn-tools-clear {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 48%;
+    margin: 0 5px;
+}
+
+/* Primary button styling */
+.main-calculator-container .btn-tools-primary {
+    background-color: #008060;
+    color: white;
+    border: none;
+}
+
+.main-calculator-container .btn-tools-primary:hover {
+    background-color: #005A40;
+}
+
+/* Clear button styling (you can customize this if needed) */
+.main-calculator-container .btn-tools-clear {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.main-calculator-container .btn-tools-clear:hover {
+    background-color: #d32f2f;
+}
+.main-calculator-container .bt-ro {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* Add Item Button and other button styles */
+.main-calculator-container .btn-tools-primary,
+.main-calculator-container .btn-tools-clear,
+.main-calculator-container .btn-add-item {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 48%;
+    margin: 0 5px;
+}
+
+/* Primary button styling (Download Invoice) */
+.main-calculator-container .btn-tools-primary {
+    background-color: #008060;
+    color: white;
+    border: none;
+}
+
+.main-calculator-container .btn-tools-primary:hover {
+    background-color: #005A40;
+}
+
+/* Clear button styling (optional, customize if needed) */
+.main-calculator-container .btn-tools-clear {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.main-calculator-container .btn-tools-clear:hover {
+    background-color: #d32f2f;
+}
+
+/* Add Item button styling */
+ .btn-add-item {
+  background-color: #008060;
+    color: white;
+    border: none;
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: 20%;
+    margin: 0 5px;
+    text-align: center;
+}
+}
+
+.btn-add-item:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+/* Responsive styling */
+@media (max-width: 600px) {
+    .form-group-row {
+        flex-direction: column;
+    }
+}
+
+    </style>
+</head>
+<body>
+  <div class="container">
+      <form id="purchaseOrderForm">
+          <div class="form-group-row">
+              <div class="input-field">
+                  <label for="companyName">Company Name</label>
+                  <input id="companyName" type="text" placeholder="Company Name" required>
+              </div>
+              <div class="input-field">
+                  <label for="companyEmail">Email</label>
+                  <input id="companyEmail" type="email" placeholder="Email" required>
+              </div>
+              <div class="input-field">
+                  <label for="address">Address</label>
+                  <input id="address" type="text" placeholder="Address" required>
+              </div>
+          </div>
+
+          <div class="container vendor-info">
+              <h2>Enter Vendor Information</h2>
+              <div class="form-group-row">
+                  <div class="input-field">
+                      <label for="vendorName">Vendor Name</label>
+                      <input id="vendorName" type="text" placeholder="Vendor Name" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="vendorEmail">Email</label>
+                      <input id="vendorEmail" type="email" placeholder="Email" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="vendorPhone">Phone Number</label>
+                      <input id="vendorPhone" type="text" placeholder="Phone Number" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="vendorAddress">Address</label>
+                      <input id="vendorAddress" type="text" placeholder="Address" required>
+                  </div>
+              </div>
+          </div>
+
+          <div class="container purchase-order-info">
+              <h2>Enter Purchase Order Information</h2>
+              <div class="form-group-row">
+                  <div class="input-field">
+                      <label for="purchaseOrderNumber">Purchase Order Number</label>
+                      <input id="purchaseOrderNumber" type="text" placeholder="Purchase Order Number" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="purchaseOrderDate">Purchase Order Date</label>
+                      <input id="purchaseOrderDate" type="date" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="deliveryDate">Delivery Date</label>
+                      <input id="deliveryDate" type="date" required>
+                  </div>
+                  <div class="input-field">
+                      <label for="shippingMethod">Shipping Method</label>
+                      <input id="shippingMethod" type="text" placeholder="Shipping Method" required>
+                  </div>
+                  <div class="input-field full-width">
+                      <label for="shippingTerms">Shipping Terms</label>
+                      <textarea id="shippingTerms" placeholder="Shipping Terms" required></textarea>
+                  </div>
+              </div>
+          </div>
+
+          <div class="container">
+              <h2>Enter Items You Wish to Order</h2>
+              <table id="itemTable" class="form-table">
+                  <tr>
+                      <td><input type="text" id="item1" placeholder="Item" required></td>
+                      <td><input type="text" id="desc1" placeholder="Description" required></td>
+                      <td><input type="number" id="quantity1" value="1" min="1" onchange="calculateTotal()" required></td>
+                      <td><input type="number" id="price1" value="0" min="0" onchange="calculateTotal()" required></td>
+                      <td><span id="amount1">0.00</span> EGP</td>
+                  </tr>
+              </table>
+              <button class="btn-add-item" type="button" onclick="addItem()">Add Item</button>
+              <div class="form-group-row">
+                  <div class="input-field">
+                      <label for="taxRate">Tax Rate:</label>
+                      <input type="number" id="taxRate" value="13" min="0" max="100" onchange="calculateTotal()"> %
+                  </div>
+              </div>
+              <div class="form-group-row">
+                  <div class="input-field">
+                      <label>Subtotal:</label>
+                      <span id="subtotal">0.00</span> EGP
+                  </div>
+                  <div class="input-field">
+                      <label>Tax:</label>
+                      <span id="tax">0.00</span> EGP
+                  </div>
+                  <div class="input-field">
+                      <label>Total:</label>
+                      <span id="total">0.00</span> EGP
+                  </div>
+              </div>
+              <div class="main-calculator-container">
+                <button class="btn-tools-primary" type="button" onclick="downloadInvoice()">Download Invoice</button>
+                <button class="btn-tools-clear" type="button" onclick="clearForm()">Clear Form</button>
+            </div>
+          </div>
+      </form>
+  </div>
+
+  <script>
+      function calculateTotal() {
+          let subtotal = 0;
+          const taxRate = parseFloat(document.getElementById('taxRate').value) / 100;
+          document.querySelectorAll('#itemTable tr').forEach((row, index) => {
+              const quantity = parseFloat(row.querySelector(`#quantity${index + 1}`).value) || 0;
+              const price = parseFloat(row.querySelector(`#price${index + 1}`).value) || 0;
+              const amount = quantity * price;
+              row.querySelector(`#amount${index + 1}`).textContent = amount.toFixed(2) + " EGP";
+              subtotal += amount;
+          });
+          const tax = subtotal * taxRate;
+          const total = subtotal + tax;
+          document.getElementById('subtotal').textContent = subtotal.toFixed(2) + " EGP";
+          document.getElementById('tax').textContent = tax.toFixed(2) + " EGP";
+          document.getElementById('total').textContent = total.toFixed(2) + " EGP";
+      }
+
+      function addItem() {
+          const table = document.getElementById('itemTable');
+          const rowCount = table.rows.length;
+          const row = table.insertRow();
+          row.innerHTML = `
+              <td><input type="text" id="item${rowCount + 1}" placeholder="Item" required></td>
+              <td><input type="text" id="desc${rowCount + 1}" placeholder="Description" required></td>
+              <td><input type="number" id="quantity${rowCount + 1}" value="1" min="1" onchange="calculateTotal()" required></td>
+              <td><input type="number" id="price${rowCount + 1}" value="0" min="0" onchange="calculateTotal()" required></td>
+              <td><span id="amount${rowCount + 1}">0.00</span> EGP</td>
+          `;
+      }
+
+      function downloadInvoice() {
+          const vendorName = document.getElementById('vendorName').value;
+          const vendorEmail = document.getElementById('vendorEmail').value;
+          const vendorPhone = document.getElementById('vendorPhone').value;
+          const vendorAddress = document.getElementById('vendorAddress').value;
+          const purchaseOrderNumber = document.getElementById('purchaseOrderNumber').value;
+          const purchaseOrderDate = document.getElementById('purchaseOrderDate').value;
+          const deliveryDate = document.getElementById('deliveryDate').value;
+          const shippingMethod = document.getElementById('shippingMethod').value;
+          const shippingTerms = document.getElementById('shippingTerms').value;
+
+          const invoiceContent = `
+              <div style="font-family: Arial, sans-serif; color: #333;">
+                  <h2>Invoice</h2>
+                  <h3>Vendor Information</h3>
+                  <p><strong>Name:</strong> ${vendorName}</p>
+                  <p><strong>Email:</strong> ${vendorEmail}</p>
+                  <p><strong>Phone:</strong> ${vendorPhone}</p>
+                  <p><strong>Address:</strong> ${vendorAddress}</p>
+                  <h3>Purchase Order Information</h3>
+                  <p><strong>Order Number:</strong> ${purchaseOrderNumber}</p>
+                  <p><strong>Order Date:</strong> ${purchaseOrderDate}</p>
+                  <p><strong>Delivery Date:</strong> ${deliveryDate}</p>
+                  <p><strong>Shipping Method:</strong> ${shippingMethod}</p>
+                  <p><strong>Shipping Terms:</strong> ${shippingTerms}</p>
+                  <h3>Order Items</h3>
+                  <table style="width: 100%; border-collapse: collapse;">
+                      <thead>
+                          <tr>
+                              <th style="border-bottom: 1px solid #333;">Item</th>
+                              <th style="border-bottom: 1px solid #333;">Description</th>
+                              <th style="border-bottom: 1px solid #333;">Quantity</th>
+                              <th style="border-bottom: 1px solid #333;">Price</th>
+                              <th style="border-bottom: 1px solid #333;">Amount</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          ${[...document.querySelectorAll('#itemTable tr')].map((row, index) => {
+                              const item = row.querySelector(`#item${index + 1}`).value || "";
+                              const desc = row.querySelector(`#desc${index + 1}`).value || "";
+                              const quantity = row.querySelector(`#quantity${index + 1}`).value || "0";
+                              const price = row.querySelector(`#price${index + 1}`).value || "0.00";
+                              const amount = row.querySelector(`#amount${index + 1}`).textContent || "0.00";
+                              return `<tr><td>${item}</td><td>${desc}</td><td>${quantity}</td><td>${price}</td><td>${amount}</td></tr>`;
+                          }).join("")}
+                      </tbody>
+                  </table>
+                  <h3>Summary</h3>
+                  <p><strong>Subtotal:</strong> ${document.getElementById('subtotal').textContent}</p>
+                  <p><strong>Tax:</strong> ${document.getElementById('tax').textContent}</p>
+                  <p><strong>Total:</strong> ${document.getElementById('total').textContent}</p>
+              </div>
+          `;
+
+          const opt = {
+              margin:       1,
+              filename:     'invoice.pdf',
+              image:        { type: 'jpeg', quality: 0.98 },
+              html2canvas:  { scale: 2 },
+              jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+          };
+
+          html2pdf().from(invoiceContent).set(opt).save();
+      }
+  </script>
+</body>
+</html>
